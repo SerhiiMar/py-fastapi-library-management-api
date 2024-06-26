@@ -1,10 +1,12 @@
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi_pagination import LimitOffsetPage, add_pagination, paginate
 from sqlalchemy.orm import Session
 
 import database, schemas, crud
 
 
 app = FastAPI()
+add_pagination(app)
 
 
 def get_db():
@@ -20,9 +22,9 @@ def read_root():
     return {"Hello": "World"}
 
 
-@app.get("/authors/", response_model=list[schemas.Author])
+@app.get("/authors/", response_model=LimitOffsetPage[schemas.Author])
 def read_authors(db: Session = Depends(get_db)):
-    return crud.get_authors(db)
+    return paginate(crud.get_authors(db))
 
 
 @app.post("/authors/", response_model=schemas.Author)
@@ -58,9 +60,9 @@ def create_book_for_specific_author(
     return crud.create_book_for_author(db=db, author_id=author_id, book=book)
 
 
-@app.get("/books/", response_model=list[schemas.Book])
+@app.get("/books/", response_model=LimitOffsetPage[schemas.Book])
 def read_books(
         author_id: int | None = None,
         db: Session = Depends(get_db)
 ):
-    return crud.get_books_list(db=db, author_id=author_id)
+    return paginate(crud.get_books_list(db=db, author_id=author_id))
