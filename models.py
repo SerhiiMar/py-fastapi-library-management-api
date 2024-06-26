@@ -1,5 +1,3 @@
-from typing import List
-
 from sqlalchemy import Column, Integer, String, ForeignKey, Date
 from sqlalchemy.orm import relationship
 
@@ -10,10 +8,10 @@ class Author(Base):
     __tablename__ = "author"
 
     id = Column(Integer, primary_key=True, index=True)
-    mane = Column(String, unique=True)
+    name = Column(String, unique=True)
     bio = Column(String)
 
-    books = relationship(List["Book"], back_populates="author")
+    books = relationship("Book", backref="author")
 
 
 class Book(Base):
