@@ -2,7 +2,9 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi_pagination import LimitOffsetPage, add_pagination, paginate
 from sqlalchemy.orm import Session
 
-import database, schemas, crud
+import database
+import schemas
+import crud
 
 
 app = FastAPI()
@@ -15,11 +17,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
-
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
 
 
 @app.get("/authors/", response_model=LimitOffsetPage[schemas.Author])
